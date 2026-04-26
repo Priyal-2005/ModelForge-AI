@@ -1,0 +1,14 @@
+{
+    "model_type": "SVM",
+    "accuracy": 0.8407643312101911,
+    "f1_score": 0.7899159663865546,
+    "features": [
+        "pclass",
+        "sex",
+        "age",
+        "sibsp",
+        "parch",
+        "fare",
+        "embarked"
+    ]
+}
