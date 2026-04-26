@@ -1,6 +1,9 @@
 import sys
 import os
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from pathlib import Path
+
+# Ensure absolute import path works
+sys.path.append(str(Path(__file__).resolve().parents[1]))
 
 from src.data.loader import load_titanic_data
 from src.data.validator import validate_data
@@ -12,36 +15,37 @@ from src.evaluation.selector import select_best_model
 from src.utils.experiment_tracker import ExperimentTracker
 from src.utils.model_persistence import save_model, save_metadata
 from src.utils.config import MODEL_PATH, PREPROCESSOR_PATH, METADATA_PATH
+from src.utils.logger import logger
 
 def main():
-    print("=== MODELFORGE AI: TRAINING PIPELINE ===")
+    logger.info("=== MODELFORGE AI: TRAINING PIPELINE ===")
     
     # 1. Load data
     df = load_titanic_data()
-    print(f"Data loaded successfully. Shape: {df.shape}")
+    logger.info(f"Data loaded successfully. Shape: {df.shape}")
     
     # 2. Validate data
-    print("Validating data...")
+    logger.info("Validating data...")
     is_valid, errors = validate_data(df)
     if not is_valid:
-        print("Data validation failed!")
+        logger.error("Data validation failed!")
         for error in errors:
-            print(f"- {error}")
+            logger.error(f"- {error}")
         sys.exit(1)
-    print("Data validation passed.")
+    logger.info("Data validation passed.")
     
     # 3 & 4. Split and Preprocess
-    print("Preprocessing data...")
+    logger.info("Preprocessing data...")
     preprocessor = DataPreprocessor()
     X_train, X_test, y_train, y_test = preprocessor.prepare_data(df)
-    print(f"Preprocessing complete. Train size: {X_train.shape[0]}, Test size: {X_test.shape[0]}")
+    logger.info(f"Preprocessing complete. Train size: {X_train.shape[0]}, Test size: {X_test.shape[0]}")
     
     # 5. Train models
-    print("\n--- Training Phase ---")
+    logger.info("\n--- Training Phase ---")
     trained_models = train_all_models(X_train, y_train)
     
     # 6. Evaluate models
-    print("\n--- Evaluation Phase ---")
+    logger.info("\n--- Evaluation Phase ---")
     evaluations = {}
     predictions_dict = {}
     probabilities_dict = {}
@@ -65,22 +69,20 @@ def main():
             params=info["best_params"],
             training_time=info["training_time"]
         )
-        print(f"Evaluated {name} - F1: {metrics['f1']:.4f}, Accuracy: {metrics['accuracy']:.4f}")
+        logger.info(f"Evaluated {name} - F1: {metrics['f1']:.4f}, Accuracy: {metrics['accuracy']:.4f}")
         
     # Visualizations
-    print("Generating visualizations...")
+    logger.info("Generating visualizations...")
     generate_confusion_matrices(y_test, predictions_dict)
     generate_roc_curves(y_test, probabilities_dict)
     
     # 7 & 8. Select best model & Save results
-    print("\n--- Selection Phase ---")
+    logger.info("\n--- Selection Phase ---")
     best_model, best_f1, comp_df = select_best_model(evaluations)
-    print(f"Best model: {best_model} (F1: {best_f1:.4f})")
-    print("Comparison results saved to outputs/model_comparison.csv")
-    print("Experiment tracking updated in outputs/experiments.json")
+    logger.info(f"Best model: {best_model} (F1: {best_f1:.4f})")
     
-    print("\n--- Model Persistence ---")
-    print("Saving best model and preprocessor...")
+    logger.info("\n--- Model Persistence ---")
+    logger.info("Saving best model and preprocessor...")
     feature_names = ['pclass', 'sex', 'age', 'sibsp', 'parch', 'fare', 'embarked']
     best_model_obj = trained_models[best_model]["best_estimator"]
     
@@ -88,7 +90,7 @@ def main():
     save_model(preprocessor.preprocessor, PREPROCESSOR_PATH)
     save_metadata(best_model, evaluations[best_model], feature_names, METADATA_PATH)
     
-    print("Pipeline completed successfully.")
+    logger.info("Pipeline completed successfully.")
 
 if __name__ == "__main__":
     main()

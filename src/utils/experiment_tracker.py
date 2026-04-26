@@ -1,13 +1,14 @@
 import json
-import os
+from pathlib import Path
 from datetime import datetime
+from src.utils.logger import logger
 
 class ExperimentTracker:
     def __init__(self, filepath="outputs/experiments.json"):
-        self.filepath = filepath
-        os.makedirs(os.path.dirname(self.filepath), exist_ok=True)
+        self.filepath = Path(filepath).resolve()
+        self.filepath.parent.mkdir(parents=True, exist_ok=True)
         
-    def log_experiment(self, model_name, metrics, params, training_time):
+    def log_experiment(self, model_name: str, metrics: dict, params: dict, training_time: float):
         """Logs experiment results to a JSON file."""
         record = {
             "model": model_name,
@@ -19,8 +20,8 @@ class ExperimentTracker:
         }
         
         history = []
-        if os.path.exists(self.filepath):
-            with open(self.filepath, "r") as f:
+        if self.filepath.exists():
+            with self.filepath.open("r") as f:
                 try:
                     history = json.load(f)
                 except json.JSONDecodeError:
@@ -28,5 +29,6 @@ class ExperimentTracker:
                     
         history.append(record)
         
-        with open(self.filepath, "w") as f:
+        with self.filepath.open("w") as f:
             json.dump(history, f, indent=4)
+        logger.info(f"Experiment logged for {model_name} in {self.filepath}")

@@ -1,11 +1,14 @@
 import pandas as pd
 import seaborn as sns
-import os
+from pathlib import Path
+from src.utils.logger import logger
 
-def load_titanic_data(save_path="data/raw/titanic.csv"):
+def load_titanic_data(save_path="data/raw/titanic.csv") -> pd.DataFrame:
     """Loads Titanic dataset from seaborn and saves to raw data path."""
-    print("Loading Titanic dataset...")
+    logger.info("Loading Titanic dataset...")
     df = sns.load_dataset("titanic")
-    os.makedirs(os.path.dirname(save_path), exist_ok=True)
-    df.to_csv(save_path, index=False)
+    p = Path(save_path).resolve()
+    p.parent.mkdir(parents=True, exist_ok=True)
+    df.to_csv(p, index=False)
+    logger.info(f"Saved raw dataset to {p}")
     return df

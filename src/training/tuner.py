@@ -1,10 +1,12 @@
 from sklearn.model_selection import GridSearchCV
 import time
+from src.utils.logger import logger
 
 def tune_model(model, param_grid, X_train, y_train):
     """Tunes a model using GridSearchCV and returns the best estimator, params, CV score, and time."""
     start_time = time.time()
     
+    logger.info(f"Starting GridSearchCV with {len(param_grid)} parameter grids...")
     grid_search = GridSearchCV(
         estimator=model,
         param_grid=param_grid,
@@ -15,6 +17,7 @@ def tune_model(model, param_grid, X_train, y_train):
     
     grid_search.fit(X_train, y_train)
     training_time = time.time() - start_time
+    logger.info(f"GridSearchCV completed in {training_time:.2f}s")
     
     return {
         "best_estimator": grid_search.best_estimator_,

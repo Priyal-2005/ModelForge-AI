@@ -4,6 +4,7 @@ from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.impute import SimpleImputer
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
+from src.utils.logger import logger
 
 class DataPreprocessor:
     def __init__(self):
@@ -11,7 +12,10 @@ class DataPreprocessor:
         
     def prepare_data(self, df: pd.DataFrame):
         # Drop duplicates
+        initial_len = len(df)
         df = df.drop_duplicates()
+        if len(df) < initial_len:
+            logger.info(f"Dropped {initial_len - len(df)} duplicate rows.")
         
         # Features and target
         X = df[['pclass', 'sex', 'age', 'sibsp', 'parch', 'fare', 'embarked']].copy()
@@ -21,6 +25,7 @@ class DataPreprocessor:
         X_train, X_test, y_train, y_test = train_test_split(
             X, y, test_size=0.2, stratify=y, random_state=42
         )
+        logger.info(f"Train/test split created. Train: {len(X_train)}, Test: {len(X_test)}")
         
         # Define pipelines
         numeric_features = ['age', 'sibsp', 'parch', 'fare', 'pclass']
@@ -43,7 +48,9 @@ class DataPreprocessor:
         )
         
         # Fit ONLY on training data
+        logger.info("Fitting preprocessor strictly on training data...")
         X_train_processed = self.preprocessor.fit_transform(X_train)
         X_test_processed = self.preprocessor.transform(X_test)
+        logger.info("Data preprocessing completed safely (no leakage).")
         
         return X_train_processed, X_test_processed, y_train, y_test

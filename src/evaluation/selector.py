@@ -1,7 +1,8 @@
 import pandas as pd
-import os
+from pathlib import Path
+from src.utils.logger import logger
 
-def select_best_model(evaluations, save_path="outputs/model_comparison.csv"):
+def select_best_model(evaluations: dict, save_path="outputs/model_comparison.csv"):
     """Selects best model based on F1-score and saves comparison table."""
     records = []
     best_model = None
@@ -24,7 +25,9 @@ def select_best_model(evaluations, save_path="outputs/model_comparison.csv"):
     df = pd.DataFrame(records)
     df = df.sort_values(by="F1-Score", ascending=False)
     
-    os.makedirs(os.path.dirname(save_path), exist_ok=True)
-    df.to_csv(save_path, index=False)
+    p = Path(save_path).resolve()
+    p.parent.mkdir(parents=True, exist_ok=True)
+    df.to_csv(p, index=False)
+    logger.info(f"Comparison results saved to {p}")
     
     return best_model, best_f1, df

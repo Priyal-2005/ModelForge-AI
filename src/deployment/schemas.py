@@ -1,6 +1,8 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 
 class PredictionInput(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    
     pclass: int = Field(..., ge=1, le=3, description="Passenger Class (1, 2, or 3)")
     sex: str = Field(..., description="Sex ('male' or 'female')")
     age: float = Field(..., ge=0, le=120, description="Age in years")
