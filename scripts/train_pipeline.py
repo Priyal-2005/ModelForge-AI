@@ -10,6 +10,7 @@ from src.evaluation.metrics import compute_metrics
 from src.evaluation.visualizer import generate_confusion_matrices, generate_roc_curves
 from src.evaluation.selector import select_best_model
 from src.utils.experiment_tracker import ExperimentTracker
+from src.utils.model_persistence import save_model, save_metadata
 
 def main():
     print("=== MODELFORGE AI: TRAINING PIPELINE ===")
@@ -76,6 +77,16 @@ def main():
     print(f"Best model: {best_model} (F1: {best_f1:.4f})")
     print("Comparison results saved to outputs/model_comparison.csv")
     print("Experiment tracking updated in outputs/experiments.json")
+    
+    print("\n--- Model Persistence ---")
+    print("Saving best model and preprocessor...")
+    feature_names = ['pclass', 'sex', 'age', 'sibsp', 'parch', 'fare', 'embarked']
+    best_model_obj = trained_models[best_model]["best_estimator"]
+    
+    save_model(best_model_obj, "models/best_model.pkl")
+    save_model(preprocessor.preprocessor, "models/preprocessor.pkl")
+    save_metadata(best_model, evaluations[best_model], feature_names, "models/metadata.json")
+    
     print("Pipeline completed successfully.")
 
 if __name__ == "__main__":
