@@ -72,3 +72,33 @@ curl -X POST "http://localhost:8000/predict" \
 
 ## Deployment Note
 **Deployed using Docker + Render.** The system ships with a multi-stage `Dockerfile` which natively consumes standard `.env` variables like `$PORT`, ready for 1-click cloud deployments.
+
+---
+
+## 🚀 Live API
+
+Deployed on Render:
+https://modelforge-ai-kmqn.onrender.com/docs
+
+### Example Request
+
+POST /predict
+
+{
+  "Pclass": 1,
+  "Sex": "female",
+  "Age": 30,
+  "SibSp": 0,
+  "Parch": 0,
+  "Fare": 100,
+  "Embarked": "C"
+}
+
+### Example Response
+
+{
+  "prediction": 1,
+  "probability": 0.87,
+  "model": "SVM",
+  "confidence": "high"
+}
