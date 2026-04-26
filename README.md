@@ -84,21 +84,24 @@ https://modelforge-ai-kmqn.onrender.com/docs
 
 POST /predict
 
+```
 {
-  "Pclass": 1,
-  "Sex": "female",
-  "Age": 30,
-  "SibSp": 0,
-  "Parch": 0,
-  "Fare": 100,
-  "Embarked": "C"
+  "pclass": 1,
+  "sex": "female",
+  "age": 30,
+  "sibsp": 0,
+  "parch": 0,
+  "fare": 100,
+  "embarked": "C"
 }
+```
 
 ### Example Response
-
+```
 {
   "prediction": 1,
-  "probability": 0.87,
+  "probability": 0.8788813361301246,
   "model": "SVM",
   "confidence": "high"
 }
+```
