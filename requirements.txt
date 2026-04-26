@@ -1,0 +1,10 @@
+pandas
+seaborn
+scikit-learn
+xgboost
+fastapi
+uvicorn
+pydantic
+python-dotenv
+joblib
+matplotlib

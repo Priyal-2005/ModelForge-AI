@@ -1,2 +1,6 @@
 .env
 .venv
+models/
+outputs/
+__pycache__/
+*.pyc

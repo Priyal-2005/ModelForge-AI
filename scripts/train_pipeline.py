@@ -11,6 +11,7 @@ from src.evaluation.visualizer import generate_confusion_matrices, generate_roc_
 from src.evaluation.selector import select_best_model
 from src.utils.experiment_tracker import ExperimentTracker
 from src.utils.model_persistence import save_model, save_metadata
+from src.utils.config import MODEL_PATH, PREPROCESSOR_PATH, METADATA_PATH
 
 def main():
     print("=== MODELFORGE AI: TRAINING PIPELINE ===")
@@ -83,9 +84,9 @@ def main():
     feature_names = ['pclass', 'sex', 'age', 'sibsp', 'parch', 'fare', 'embarked']
     best_model_obj = trained_models[best_model]["best_estimator"]
     
-    save_model(best_model_obj, "models/best_model.pkl")
-    save_model(preprocessor.preprocessor, "models/preprocessor.pkl")
-    save_metadata(best_model, evaluations[best_model], feature_names, "models/metadata.json")
+    save_model(best_model_obj, MODEL_PATH)
+    save_model(preprocessor.preprocessor, PREPROCESSOR_PATH)
+    save_metadata(best_model, evaluations[best_model], feature_names, METADATA_PATH)
     
     print("Pipeline completed successfully.")
 

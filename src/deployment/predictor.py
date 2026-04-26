@@ -1,5 +1,6 @@
 import pandas as pd
 from src.utils.model_persistence import load_model, load_metadata
+from src.utils.config import MODEL_PATH, PREPROCESSOR_PATH, METADATA_PATH
 
 class Predictor:
     def __init__(self):
@@ -9,9 +10,9 @@ class Predictor:
         
     def load_artifacts(self):
         """Loads model artifacts from disk."""
-        self.model = load_model("models/best_model.pkl")
-        self.preprocessor = load_model("models/preprocessor.pkl")
-        self.metadata = load_metadata("models/metadata.json")
+        self.model = load_model(MODEL_PATH)
+        self.preprocessor = load_model(PREPROCESSOR_PATH)
+        self.metadata = load_metadata(METADATA_PATH)
         
     def predict(self, input_data: dict) -> dict:
         """Runs preprocessing and prediction on the input data."""
@@ -24,8 +25,6 @@ class Predictor:
         # Ensure features match
         expected_features = self.metadata.get("features", [])
         if expected_features:
-            # Reorder columns to match training and fill missing with appropriate defaults if needed
-            # For simplicity, assuming incoming data matches expected_features perfectly
             df = df[expected_features]
             
         # Apply preprocessor
