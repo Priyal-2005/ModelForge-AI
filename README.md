@@ -16,8 +16,9 @@ ModelForge AI is a robust, modular, production-ready ML system built to automati
 - **Multi-model training**: Automatically evaluates LogisticRegression, RandomForest, DecisionTree, SVM, and XGBoost.
 - **Hyperparameter tuning**: Utilizes parallelized `GridSearchCV`.
 - **Evaluation + comparison**: Saves ROC curves, confusion matrices, and detailed metrics logs (`outputs/experiments.json`).
-- **Model persistence**: Keeps artifacts aligned with training features.
-- **FastAPI deployment**: Real-time prediction endpoint with confidence thresholds.
+- **Model persistence**: Keeps artifacts aligned with training features seamlessly via `pathlib`.
+- **Production API**: FastAPI deployment with strict Pydantic input validation, execution timeouts, and clean JSON exception handling.
+- **Centralized Logging**: Comprehensive operational logging safely piped to standard output and `outputs/logs/app.log`.
 
 ## How to run
 
@@ -34,6 +35,12 @@ python scripts/serve_api.py
 ```
 
 *Docs will be available at: http://localhost:8000/docs*
+
+### 3. Running the Test Suite
+The project contains `pytest` sanity checks verifying API constraints and preprocessing validity:
+```bash
+pytest tests/
+```
 
 ## API Example
 
